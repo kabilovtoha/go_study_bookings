@@ -1,0 +1,35 @@
+{{template "base" .}}
+
+{{define "css"}}
+    <style>
+        .room-image {
+            width: 50%;
+        }
+    </style>
+{{end}}
+
+
+{{ define "content" }}
+
+    <div class="container">
+        <div class="row ">
+            <div class="col">
+                <img
+                    class="room-image img-fluid img-thumbnail mx-auto d-block"
+                    src="{{index .StringMap "image"}}" alt="generals-quarters" >
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <h1 class="text-center mt-3">{{index .StringMap "post_header"}} </h1>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Animi aut fugit inventore laudantium molestias qui quia? Architecto cum eius fugiat laborum maxime omnis recusandae sit tempora vel voluptatem? Consequatur, nulla. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Blanditiis, sequi unde. Amet aperiam atque commodi dolorum exercitationem expedita magnam magni maiores modi, odio pariatur, possimus saepe sequi, sint tenetur vitae. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequuntur et facilis incidunt laudantium veritatis! Animi aperiam commodi dolore dolorem doloremque est expedita hic, minima, molestias nihil numquam officiis, provident voluptatibus.</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col text-center">
+                <a href="/make-reservation?type=gq" class="btn btn-success">Check Availability</a>
+            </div>
+        </div>
+        <div class="mb-5"></div>
+    </div>
+{{ end  }}
