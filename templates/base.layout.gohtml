@@ -5,6 +5,9 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.3.3/dist/css/datepicker.min.css">
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/notie/dist/notie.min.css">
+    <link href="/static/css/styles.css" rel="stylesheet">
 
     <style>
         .my-footer {
@@ -44,7 +47,7 @@
                         </ul>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/reservation">Book Now</a>
+                        <a class="nav-link" href="/search-availability">Book Now</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/contacts">Contact</a>
@@ -56,13 +59,140 @@
 
     {{ block "content" . }}
     {{ end  }}
-
+    <input id="base_inp_csrf_token" type="hidden" name="csrf_token" value="{{.CSRFToken}}">
     <div class="row my-footer">
         <div class="col">Left</div>
         <div class="col">Middle</div>
         <div class="col">Right</div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.3.3/dist/js/datepicker-full.min.js"></script>
+    <script src="https://unpkg.com/notie"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        let attention = Prompt();
+
+        function notify(msg, msgType) {
+            notie.alert({
+                type: msgType, // optional, default = 4, enum: [1, 2, 3, 4, 5, 'success', 'warning', 'error', 'info', 'neutral']
+                text: msg,
+            })
+        }
+        function notifyModal(title, text, html, icon, confirmationButton) {
+            Swal.fire({
+                title: title,
+                text: text,
+                icon: icon, // 'error', 'success', 'question', 'warning', 'info',
+            })
+        }
+
+        function Prompt() {
+            function toast(c) {
+                const {
+                    msg = "",
+                    icon = "success",
+                    position = 'top-end',
+                    showConfirmButton = false,
+                    timer = 3000,
+                    timerProgressBar = true,
+                } = c;
+                const Toast = Swal.mixin({
+                    toast: true,
+                    title: msg,
+                    icon: icon,
+                    position: position,
+                    showConfirmButton: showConfirmButton,
+                    timer: timer,
+                    timerProgressBar: timerProgressBar,
+                    didOpen: (toast) => {
+                        toast.addEventListener('mouseenter', Swal.stopTimer)
+                        toast.addEventListener('mouseleave', Swal.resumeTimer)
+                    }
+                })
+
+                Toast.fire({
+                    icon: 'success',
+                    title: 'Signed in successfully'
+                })
+            }
+            function success(c) {
+                const {
+                    msg = "",
+                    title = "",
+                    footer = "",
+                } = c;
+                Swal.fire({
+                    icon: 'success',
+                    title: title,
+                    text: msg,
+                    footer: footer,
+                })
+            }
+            function error(c) {
+                const {
+                    msg = "",
+                    title = "",
+                    footer = "",
+                } = c;
+                Swal.fire({
+                    icon: 'error',
+                    title: title,
+                    text: msg,
+                    footer: footer,
+                })
+            }
+            async function custom (c) {
+                const {
+                    msg = "",
+                    title = "",
+                } = c;
+                const { value: result } = await Swal.fire({
+                    title: title,
+                    html: msg,
+                    backdrop: false,
+                    focusConfirm: false,
+                    showCancelButton: true,
+                    willOpen: () => {
+                        if (c.willOpen !== undefined) {
+                            c.willOpen();
+                        }
+                    },
+                    preConfirm: () => {
+                        if (c.preConfirm !== undefined) {
+                            c.preConfirm()
+                        }
+                    },
+                    didOpen: () => {
+                        if (c.didOpen !== undefined) {
+                            c.didOpen()
+                        }
+                    }
+                })
+                if (result) {
+                    if (result.dismiss !== Swal.DismissReason.cancel) {
+                       if (result.value!=="") {
+                            if (c.callback !== undefined) {
+                                c.callback(result);
+                            }
+                       } else {
+                           c.callback(false);
+                       }
+                    } else {
+                        c.callback(false);
+                    }
+                    // Swal.fire(JSON.stringify(result))
+                }
+            }
+            return {
+                toast: toast,
+                success: success,
+                error: error,
+                custom: custom,
+            }
+        }
+    </script>
 
     {{block "js" .}}{{end}}
 

@@ -27,9 +27,85 @@
         </div>
         <div class="row">
             <div class="col text-center">
-                <a href="/make-reservation?type=gq" class="btn btn-success">Check Availability</a>
+                <a id="id_check_{{index .StringMap "room_type"}}" href="#!" class="btn btn-success">Check Availability</a>
             </div>
         </div>
         <div class="mb-5"></div>
     </div>
 {{ end  }}
+
+{{define "js"}}
+    <script>
+        let html = `
+        <form id="check-availability-form" action="/api-search-availability" method="post" novalidate class="needs-validation">
+            <div class="row mx-0">
+                <div class="col-12">
+                    <div class="row">
+                        <div class="col">
+                            <div class="">
+                                <input id="id_start_date" required type="text" disabled placeholder="Arrival" name="start_date" class="form-control" id="start" aria-describedby="startDateHelp">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="">
+                                <input id="id_end_date" required type="text" disabled placeholder="Departure" name="end_date" class="form-control" id="end" aria-describedby="endDateHelp">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ form>
+        `
+
+        let check_gq = document.getElementById('id_check_gq');
+        if (check_gq) {
+            check_gq.addEventListener('click', () => {
+                // notify('SomeButton clicked', 'success')
+                attention.custom({
+                    msg: html,
+                    title: "Choose your dates.",
+                    callback: function (result) {
+                        let form = document.getElementById("check-availability-form")
+                        let formData = new FormData(form)
+                        formData.append("csrf_token", "{{.CSRFToken}}")
+
+                        console.log('called');
+                        fetch('/api-search-availability', {
+                            method: 'POST',
+                            body: formData
+                        })
+                            .then((resp) => resp.json())
+                            .then(data => {
+                                console.log('data: ', data);
+                            })
+                    },
+                    willOpen: function () {
+                        document.getElementById("check-availability-form").closest('.swal2-html-container').style.zIndex = "10";
+                        const form_check = document.getElementById('check-availability-form');
+                        const rangepicker = new DateRangePicker(form_check, {
+                            format: "yyyy-mm-dd",
+                            showOnFocus: true,
+                        });
+                    },
+                    preConfirm: function () {
+                        return [
+                            document.getElementById('id_start_date').value,
+                            document.getElementById('id_end_date').value
+                        ]
+                    },
+                    didOpen: function () {
+                        document.getElementById('id_start_date').removeAttribute('disabled')
+                        document.getElementById('id_end_date').removeAttribute('disabled')
+                    },
+                })
+            })
+        }
+        let check_mq = document.getElementById('id_check_mq');
+        if (check_mq) {
+            check_mq.addEventListener('click', () => {
+                // notify('SomeButton clicked', 'success')
+                attention.custom({msg: html, title: "Choose your dates."})
+            })
+        }
+    </script>
+{{end}}

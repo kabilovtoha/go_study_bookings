@@ -2,9 +2,9 @@ package main
 
 import (
 	"github.com/alexedwards/scs/v2"
-	"github.com/kabilovtoha/go_study_bookings/pkg/config"
-	"github.com/kabilovtoha/go_study_bookings/pkg/handlers"
-	"github.com/kabilovtoha/go_study_bookings/pkg/render"
+	"github.com/kabilovtoha/go_study_bookings/internal/config"
+	"github.com/kabilovtoha/go_study_bookings/internal/handlers"
+	"github.com/kabilovtoha/go_study_bookings/internal/render"
 	"log"
 	"net/http"
 	"time"
